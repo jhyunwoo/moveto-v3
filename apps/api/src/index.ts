@@ -3,9 +3,10 @@ import { Scalar } from "@scalar/hono-api-reference";
 import { BaseResSchema } from "./getSchema";
 import healthApp from "./health";
 import authApp from "./auth";
+import Bindings from "../lib/cloudflare-bindings";
 
 // Open API 기능이 포함된 app 생성
-const app = new OpenAPIHono();
+const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
 // Open API Route 설정
 app.doc("/doc", {
