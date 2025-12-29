@@ -11,7 +11,7 @@ export const SignUpReqSchema = z
         example: "hono_user",
       }),
 
-    email: z.string().email("유효한 이메일 형식이 아닙니다.").max(255).openapi({
+    email: z.email("유효한 이메일 형식이 아닙니다.").max(255).openapi({
       example: "user@example.com",
     }),
 

@@ -1,22 +1,23 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { SignUpReqSchema, SignUpResSchema } from "./postSchema";
+import { SignInReqSchema } from "./postSchema";
+import { SignUpResSchema } from "../sign-up/postSchema";
 import { ErrorSchema } from "../../../lib/validations";
 import Env from "../../../lib/env";
 import AuthManager from "../../../lib/auth/auth";
 
-const signUpApp = new OpenAPIHono<Env>();
+const signInApp = new OpenAPIHono<Env>();
 
-const postRoute = createRoute({
+const route = createRoute({
   path: "/",
   method: "post",
   request: {
     body: {
       content: {
         "application/json": {
-          schema: SignUpReqSchema,
+          schema: SignInReqSchema,
         },
       },
-      required: true,
+      description: "로그인 정보",
     },
   },
   responses: {
@@ -26,7 +27,7 @@ const postRoute = createRoute({
           schema: SignUpResSchema,
         },
       },
-      description: "회원가입 성공",
+      description: "로그인 성공",
       headers: z.object({
         "Set-Cookie": z.string().openapi({
           description: "세션 쿠키 및 기타 쿠키",
@@ -53,14 +54,14 @@ const postRoute = createRoute({
   },
 });
 
-signUpApp.openapi(
-  postRoute,
+signInApp.openapi(
+  route,
   async (c) => {
-    // 사용자가 입력한 데이터
-    const { username, email, password } = await c.req.json();
+    const { email, password } = await c.req.json();
 
     const auth = new AuthManager(c);
-    const result = await auth.signUp(username, email, password);
+    const result = await auth.signIn(email, password);
+
     return c.json(result, 200);
   },
   (result, c) => {
@@ -77,4 +78,4 @@ signUpApp.openapi(
   },
 );
 
-export default signUpApp;
+export default signInApp;

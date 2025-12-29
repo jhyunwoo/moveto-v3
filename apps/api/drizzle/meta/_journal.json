@@ -8,6 +8,27 @@
       "when": 1766901728217,
       "tag": "0000_normal_masked_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1766917075086,
+      "tag": "0001_gray_nitro",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1766919062563,
+      "tag": "0002_colorful_wong",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1766995445245,
+      "tag": "0003_puzzling_otto_octavius",
+      "breakpoints": true
     }
   ]
 }

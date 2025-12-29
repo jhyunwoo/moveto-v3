@@ -1,7 +1,7 @@
 use worker::*;
 use serde::{Deserialize, Serialize};
 use argon2::{
-    password_hash::{PasswordHasher, SaltString},
+    password_hash::{PasswordHasher, SaltString, PasswordHash, PasswordVerifier},
     Argon2, Algorithm, Version, Params
 };
 use rand_core::OsRng;
@@ -14,6 +14,17 @@ struct RequestData {
 #[derive(Serialize)]
 struct ResponseData {
     hash: String,
+}
+
+#[derive(Deserialize, Serialize)]
+struct VerifyRequestData {
+    hash: String,
+    text: String,
+}
+
+#[derive(Serialize)]
+struct VerifyResponseData {
+    valid: bool,
 }
 
 fn hash_password(text: &str) -> Result<String> {
@@ -37,6 +48,19 @@ fn hash_password(text: &str) -> Result<String> {
     Ok(password_hash.to_string())
 }
 
+fn verify_password(hash: &str, text: &str) -> Result<bool> {
+    let parsed_hash = PasswordHash::new(hash)
+        .map_err(|e| Error::RustError(e.to_string()))?;
+
+    let argon2 = Argon2::default();
+    
+    match argon2.verify_password(text.as_bytes(), &parsed_hash) {
+        Ok(_) => Ok(true),
+        Err(argon2::password_hash::Error::Password) => Ok(false),
+        Err(e) => Err(Error::RustError(e.to_string())),
+    }
+}
+
 mod openapi;
 
 #[event(fetch)]
@@ -52,7 +76,10 @@ async fn fetch(
     let path = req.path();
     match (req.method(), path.as_str()) {
         (Method::Post, "/") => {
-             // Continue to existing logic
+             // Continue to existing hash logic
+        },
+        (Method::Post, "/verify") => {
+             // Continue to verify logic
         },
         (Method::Get, "/openapi.json") => {
             let mut headers = Headers::new();
@@ -60,11 +87,11 @@ async fn fetch(
             return Response::ok(openapi::OPENAPI_JSON)
                 .map(|r| r.with_headers(headers));
         },
-        (Method::Get, "/doc") => {
+        (Method::Get, "/docs") => {
             return Response::from_html(openapi::SCALAR_HTML);
         },
         _ => {
-            if req.method() != Method::Post && path == "/" {
+            if req.method() != Method::Post && (path == "/" || path == "/verify") {
                  return Response::error("Method Not Allowed", 405);
             }
              return Response::error("Not Found", 404);
@@ -76,17 +103,36 @@ async fn fetch(
         return Response::error("Method Not Allowed", 405);
     }
 
-    let data: RequestData = match req.json().await {
-        Ok(d) => d,
-        Err(_) => return Response::error("Invalid JSON", 400),
-    };
+    match path.as_str() {
+        "/" => {
+            let data: RequestData = match req.json().await {
+                Ok(d) => d,
+                Err(_) => return Response::error("Invalid JSON", 400),
+            };
 
-    match hash_password(&data.text) {
-        Ok(hash) => {
-             let resp_data = ResponseData { hash };
-             Response::from_json(&resp_data)
+            match hash_password(&data.text) {
+                Ok(hash) => {
+                    let resp_data = ResponseData { hash };
+                    Response::from_json(&resp_data)
+                },
+                Err(e) => Response::error(e.to_string(), 500),
+            }
         },
-        Err(e) => Response::error(e.to_string(), 500),
+        "/verify" => {
+            let data: VerifyRequestData = match req.json().await {
+                Ok(d) => d,
+                Err(_) => return Response::error("Invalid JSON", 400),
+            };
+
+            match verify_password(&data.hash, &data.text) {
+                Ok(valid) => {
+                    let resp_data = VerifyResponseData { valid };
+                    Response::from_json(&resp_data)
+                },
+                Err(e) => Response::error(e.to_string(), 500),
+            }
+        },
+        _ => Response::error("Not Found", 404),
     }
 }
 
@@ -99,5 +145,21 @@ mod tests {
         let text = "test_text";
         let hash = hash_password(text).unwrap();
         assert!(hash.starts_with("$argon2id$"));
+    }
+
+    #[test]
+    fn test_verify_password() {
+        let text = "test_verify";
+        let hash = hash_password(text).unwrap();
+        
+        assert!(verify_password(&hash, text).unwrap());
+        assert!(!verify_password(&hash, "wrong_password").unwrap());
+    }
+
+    #[test]
+    fn test_openapi_json_validity() {
+        let json: serde_json::Value = serde_json::from_str(openapi::OPENAPI_JSON)
+            .expect("OpenAPI JSON should be valid");
+        assert!(json.get("paths").is_some());
     }
 }
