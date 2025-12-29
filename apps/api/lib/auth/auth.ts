@@ -30,7 +30,7 @@ class AuthManager {
   }
 
   // 수정된 signUp 메서드 (트랜잭션 제거 버전)
-  async signUp(username: string, password: string, email: string) {
+  async signUp(username: string, email: string, password: string) {
     const db = createDB(this.c.env.db);
 
     // 1. 이메일 중복 확인
@@ -91,22 +91,20 @@ class AuthManager {
   async signIn(email: string, password: string) {
     const db = createDB(this.c.env.db);
 
-    const checkEmailAndPassword = (
-      await db
-        .select({
-          userId: usersTable.id,
-          plan: usersTable.plan,
-          email: usersTable.email,
-          createdAt: usersTable.createdAt,
-          hashedPassword: passwordsTable.hashedPassword,
-        })
-        .from(usersTable)
-        .where(eq(usersTable.email, email))
-        .innerJoin(passwordsTable, eq(usersTable.id, passwordsTable.userId))
-    )[0];
+    const [emailAndPassword] = await db
+      .select({
+        userId: usersTable.id,
+        plan: usersTable.plan,
+        email: usersTable.email,
+        createdAt: usersTable.createdAt,
+        hashedPassword: passwordsTable.hashedPassword,
+      })
+      .from(usersTable)
+      .innerJoin(passwordsTable, eq(usersTable.id, passwordsTable.userId))
+      .where(eq(usersTable.email, email));
 
     // 유저가 없거나 비밀번호 정보가 없는 경우
-    if (!checkEmailAndPassword) {
+    if (!emailAndPassword) {
       throw new HTTPException(400, {
         message: "Email or Password is incorrect",
       });
@@ -115,7 +113,7 @@ class AuthManager {
     const checkPassword = await verifyPassword(
       this.c.env.hash,
       password,
-      checkEmailAndPassword.hashedPassword,
+      emailAndPassword.hashedPassword,
     );
 
     if (!checkPassword) {
@@ -126,10 +124,10 @@ class AuthManager {
 
     const session = new SessionManager(this.c.env.session_kv);
     const userPayload = {
-      userId: checkEmailAndPassword.userId,
-      email: checkEmailAndPassword.email,
-      createdAt: checkEmailAndPassword.createdAt,
-      plan: checkEmailAndPassword.plan,
+      userId: emailAndPassword.userId,
+      email: emailAndPassword.email,
+      createdAt: emailAndPassword.createdAt,
+      plan: emailAndPassword.plan,
     };
 
     const newSession = await session.create(userPayload);
