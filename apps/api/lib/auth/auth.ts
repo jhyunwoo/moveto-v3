@@ -29,59 +29,60 @@ class AuthManager {
     };
   }
 
+  // 수정된 signUp 메서드 (트랜잭션 제거 버전)
   async signUp(username: string, password: string, email: string) {
     const db = createDB(this.c.env.db);
 
     // 1. 이메일 중복 확인
     const checkUniqueEmail = await db
-      .select()
+      .select({ id: usersTable.id })
       .from(usersTable)
-      .where(eq(usersTable.email, email));
+      .where(eq(usersTable.email, email))
+      .limit(1);
 
     if (checkUniqueEmail.length > 0) {
-      throw new HTTPException(400, { message: "User already exist" });
+      throw new HTTPException(409, { message: "User already exists" });
     }
 
-    // 2. 트랜잭션으로 묶어서 처리 (유저 생성 + 비밀번호 저장)
-    // D1 등 Drizzle 드라이버가 transaction을 지원한다고 가정
-    let userPayload;
+    let newUser;
 
     try {
-      userPayload = await db.transaction(async (tx) => {
-        // (1) 유저 생성
-        const [newUser] = await tx
-          .insert(usersTable)
-          .values({ name: username, email: email })
-          .returning({
-            userId: usersTable.id,
-            email: usersTable.email,
-            plan: usersTable.plan,
-            createdAt: usersTable.createdAt,
-          });
+      // (1) 유저 생성
+      const result = await db
+        .insert(usersTable)
+        .values({ name: username, email: email })
+        .returning();
 
-        if (!newUser) {
-          throw new Error("Failed to create user");
-        }
+      newUser = result[0];
 
-        // (2) 비밀번호 해싱 및 저장
-        const hash = await hashPassword(this.c.env.hash, password);
-        await tx
-          .insert(passwordsTable)
-          .values({ userId: newUser.userId, hashedPassword: hash });
-
-        return newUser;
-      });
+      // (2) 비밀번호 해싱 및 저장
+      const hash = await hashPassword(this.c.env.hash, password);
+      await db
+        .insert(passwordsTable)
+        .values({ userId: newUser.id, hashedPassword: hash });
     } catch (e) {
-      console.error(e);
-      // 트랜잭션이 실패하면 자동으로 롤백되므로 별도 삭제 로직 불필요
-      throw new HTTPException(500, { message: "Failed to sign up" });
+      console.error("SignUp Error:", e);
+
+      // [중요] 수동 롤백: 유저는 생성됐는데 비밀번호 저장 실패 시 유저 삭제
+      if (newUser?.id) {
+        await db.delete(usersTable).where(eq(usersTable.id, newUser.id));
+      }
+
+      throw new HTTPException(500, { message: "Failed to process sign up" });
     }
 
-    // 3. 세션 생성
-    const session = new SessionManager(this.c.env.session_kv);
-    const sessionId = await session.create(userPayload);
+    if (!newUser)
+      throw new HTTPException(500, { message: '"Failed to create user"' });
 
-    // 4. 쿠키 설정 (옵션 상수 사용)
+    // 3. 세션 생성 및 쿠키 설정 (기존 로직 유지)
+    const session = new SessionManager(this.c.env.session_kv);
+    const userPayload = {
+      userId: newUser.id,
+      email: newUser.email,
+      plan: newUser.plan,
+      createdAt: newUser.createdAt,
+    };
+    const sessionId = await session.create(userPayload);
     setCookie(this.c, "session", sessionId, this.COOKIE_OPTIONS);
 
     return { result: "Success" };
