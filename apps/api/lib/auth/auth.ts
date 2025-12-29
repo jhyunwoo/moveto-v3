@@ -17,6 +17,7 @@ class AuthManager {
     secure: boolean;
     httpOnly: boolean;
     maxAge: number;
+    sameSite: "lax" | "none" | "strict";
   };
 
   constructor(c: Context<Env>) {
@@ -26,6 +27,7 @@ class AuthManager {
       secure: this.c.req.url !== "http://localhost:8787",
       httpOnly: true,
       maxAge: 604800, // 7일
+      sameSite: "lax",
     };
   }
 
