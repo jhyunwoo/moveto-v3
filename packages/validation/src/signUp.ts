@@ -28,7 +28,6 @@ export const SignUpReqSchema = z
         description: "보안 강도가 높은 비밀번호",
       }),
 
-    // ✅ 추가된 필드
     passwordConfirm: z.string().openapi({
       example: "StrongP@ssw0rd123!",
       description: "비밀번호 재입력 (위의 비밀번호와 일치해야 함)",
@@ -39,6 +38,10 @@ export const SignUpReqSchema = z
     path: ["passwordConfirm"], // 에러가 발생했을 때 이 필드(passwordConfirm)에 빨간 줄을 긋기 위함
   });
 
+export type SignUpReqType = z.infer<typeof SignUpReqSchema>;
+
 export const SignUpResSchema = z.object({
   result: z.string(),
 });
+
+export type SignUpResType = z.infer<typeof SignUpResSchema>;

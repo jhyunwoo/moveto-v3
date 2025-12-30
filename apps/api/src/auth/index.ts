@@ -1,13 +1,13 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import signUpApp from "./sign-up";
-import signInApp from "./sign-in";
-import signOutApp from "./sign-out";
+import signUpApp from "./signUp";
+import signInApp from "./signIn";
+import signOutApp from "./signOut";
 
 const authApp = new OpenAPIHono();
 
 const app = authApp
-  .route("/sign-up", signUpApp)
-  .route("/sign-in", signInApp)
-  .route("/sign-out", signOutApp);
+  .route("/signUp", signUpApp)
+  .route("/signIn", signInApp)
+  .route("/signOut", signOutApp);
 
 export default app;

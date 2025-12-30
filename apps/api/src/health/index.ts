@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import { HealthResSchema } from "./getSchema";
+import { HealthResSchema } from "@repo/validation";
 
 const healthApp = new OpenAPIHono();
 

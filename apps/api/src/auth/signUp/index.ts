@@ -1,8 +1,11 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { SignUpReqSchema, SignUpResSchema } from "./postSchema";
-import { ErrorSchema } from "../../../lib/validations";
 import Env from "../../../lib/env";
 import AuthManager from "../../../lib/auth/auth";
+import {
+  ErrorSchema,
+  SignUpReqSchema,
+  SignUpResSchema,
+} from "@repo/validation";
 
 const signUpApp = new OpenAPIHono<Env>();
 

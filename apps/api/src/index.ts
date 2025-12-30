@@ -18,6 +18,7 @@ app.use(
       const allowedOrigins = [
         "http://localhost:3000", // 실제 프론트엔드
         "http://localhost:8787", // Scalar 및 로컬 테스트
+        "https://web.moveto.workers.dev",
       ];
 
       // 요청한 origin이 허용 목록에 있으면 그대로 반환

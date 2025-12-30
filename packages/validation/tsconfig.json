@@ -1,0 +1,11 @@
+{
+  "extends": "@repo/typescript-config/base.json", // 혹은 "react-library.json" 등 상황에 맞게
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

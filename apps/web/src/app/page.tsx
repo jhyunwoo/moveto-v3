@@ -1,4 +1,4 @@
-import { getStaticApiClient } from "../lib/getStaticApiClient";
+import { getStaticApiClient } from "../lib/server/getStaticApiClient";
 
 export default async function HomePage() {
   const client = await getStaticApiClient();

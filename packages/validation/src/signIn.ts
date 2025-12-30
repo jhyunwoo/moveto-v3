@@ -18,6 +18,10 @@ export const SignInReqSchema = z.object({
     }),
 });
 
+export type SignInReqType = z.infer<typeof SignInReqSchema>;
+
 export const SignInResSchema = z.object({
   result: z.string(),
 });
+
+export type SignInResResponse = z.infer<typeof SignInResSchema>;

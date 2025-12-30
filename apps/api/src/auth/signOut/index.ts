@@ -1,8 +1,7 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import Env from "../../../lib/env";
-import { ErrorSchema } from "../../../lib/validations";
-import { SignOutResSchema } from "./putSchema";
 import AuthManager from "../../../lib/auth/auth";
+import { ErrorSchema, SignOutResSchema } from "@repo/validation";
 
 const signOutApp = new OpenAPIHono<Env>();
 

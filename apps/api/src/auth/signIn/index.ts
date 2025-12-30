@@ -1,9 +1,11 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { SignInReqSchema } from "./postSchema";
-import { SignUpResSchema } from "../sign-up/postSchema";
-import { ErrorSchema } from "../../../lib/validations";
 import Env from "../../../lib/env";
 import AuthManager from "../../../lib/auth/auth";
+import {
+  ErrorSchema,
+  SignInReqSchema,
+  SignInResSchema,
+} from "@repo/validation";
 
 const signInApp = new OpenAPIHono<Env>();
 
@@ -24,7 +26,7 @@ const route = createRoute({
     200: {
       content: {
         "application/json": {
-          schema: SignUpResSchema,
+          schema: SignInResSchema,
         },
       },
       description: "로그인 성공",

@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "node scripts/build-with-env.mjs .env.production 'opennextjs-cloudflare build && opennextjs-cloudflare deploy'",
+    "upload": "node scripts/build-with-env.mjs .env.production 'opennextjs-cloudflare build && opennextjs-cloudflare upload'",
+    "preview": "node scripts/build-with-env.mjs .env.production 'opennextjs-cloudflare build && opennextjs-cloudflare preview'",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts"
   },
   "dependencies": {
@@ -18,7 +18,9 @@
     "hono": "^4.11.2",
     "next": "^15.6.0-canary.60",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "react-hook-form": "^7.69.0",
+    "@repo/validation": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251230.0",
