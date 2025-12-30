@@ -57,11 +57,13 @@ class AuthManager {
 
       newUser = result[0];
 
-      // (2) 비밀번호 해싱 및 저장
-      const hash = await hashPassword(this.c.env.hash, password);
-      await db
-        .insert(passwordsTable)
-        .values({ userId: newUser.id, hashedPassword: hash });
+      if (newUser) {
+        // (2) 비밀번호 해싱 및 저장
+        const hash = await hashPassword(this.c.env.hash, password);
+        await db
+          .insert(passwordsTable)
+          .values({ userId: newUser.id, hashedPassword: hash });
+      }
     } catch (e) {
       console.error("SignUp Error:", e);
 
@@ -79,10 +81,10 @@ class AuthManager {
     // 3. 세션 생성 및 쿠키 설정 (기존 로직 유지)
     const session = new SessionManager(this.c.env.session_kv);
     const userPayload = {
-      userId: newUser.id,
-      email: newUser.email,
-      plan: newUser.plan,
-      createdAt: newUser.createdAt,
+      userId: newUser?.id,
+      email: newUser?.email,
+      plan: newUser?.plan,
+      createdAt: newUser?.createdAt,
     };
     const sessionId = await session.create(userPayload);
     setCookie(this.c, "session", sessionId, this.COOKIE_OPTIONS);

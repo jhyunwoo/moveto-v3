@@ -69,3 +69,4 @@ app.route("/health", healthApp);
 app.route("/auth", authApp);
 
 export default app;
+export type AppType = typeof app;
