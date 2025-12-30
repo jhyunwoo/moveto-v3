@@ -19,7 +19,7 @@ const route = createRoute({
   },
 });
 
-healthApp.openapi(route, (c) => {
+const app = healthApp.openapi(route, (c) => {
   return c.json(
     {
       status: "API is Healthy",
@@ -29,4 +29,4 @@ healthApp.openapi(route, (c) => {
   );
 });
 
-export default healthApp;
+export default app;

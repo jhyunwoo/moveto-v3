@@ -1,11 +1,8 @@
-import { getApiClient } from "../lib/getApiClient";
-
-export const dynamic = "force-dynamic";
+import { getStaticApiClient } from "../lib/getStaticApiClient";
 
 export default async function HomePage() {
-  const client = await getApiClient();
+  const client = await getStaticApiClient();
 
-  // @ts-ignore -- expected
   const res = await client.health.$get();
 
   if (!res.ok) {

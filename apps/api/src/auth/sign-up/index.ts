@@ -53,7 +53,7 @@ const postRoute = createRoute({
   },
 });
 
-signUpApp.openapi(
+const app = signUpApp.openapi(
   postRoute,
   async (c) => {
     // 사용자가 입력한 데이터
@@ -77,4 +77,4 @@ signUpApp.openapi(
   },
 );
 
-export default signUpApp;
+export default app;

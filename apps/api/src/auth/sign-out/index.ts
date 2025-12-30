@@ -1,7 +1,5 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import Env from "../../../lib/env";
-import { SignInReqSchema } from "../sign-in/postSchema";
-import { SignUpResSchema } from "../sign-up/postSchema";
 import { ErrorSchema } from "../../../lib/validations";
 import { SignOutResSchema } from "./putSchema";
 import AuthManager from "../../../lib/auth/auth";
@@ -40,11 +38,11 @@ const putRoute = createRoute({
   },
 });
 
-signOutApp.openapi(putRoute, async (c) => {
+const app = signOutApp.openapi(putRoute, async (c) => {
   const auth = new AuthManager(c);
   const result = await auth.signOut();
 
   return c.json(result, 200);
 });
 
-export default signOutApp;
+export default app;

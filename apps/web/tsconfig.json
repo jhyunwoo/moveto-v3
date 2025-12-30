@@ -5,7 +5,14 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "types": ["@cloudflare/workers-types"],
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "api": ["../api/src/index.ts"]
+    }
   },
   "include": [
     "**/*.ts",

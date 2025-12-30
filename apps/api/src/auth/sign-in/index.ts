@@ -54,7 +54,7 @@ const route = createRoute({
   },
 });
 
-signInApp.openapi(
+const app = signInApp.openapi(
   route,
   async (c) => {
     const { email, password } = await c.req.json();
@@ -78,4 +78,4 @@ signInApp.openapi(
   },
 );
 
-export default signInApp;
+export default app;

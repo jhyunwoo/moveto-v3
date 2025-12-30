@@ -60,13 +60,12 @@ const route = createRoute({
 });
 
 // 기본 라우트 처리
-app.openapi(route, (c) => {
-  return c.json({ message: "Moveto V3 API" }, 200);
-});
-
-// Route Grouping
-app.route("/health", healthApp);
-app.route("/auth", authApp);
+const routes = app
+  .openapi(route, (c) => {
+    return c.json({ message: "Moveto V3 API" }, 200);
+  })
+  .route("/health", healthApp)
+  .route("/auth", authApp);
 
 export default app;
-export type AppType = typeof app;
+export type AppType = typeof routes;
