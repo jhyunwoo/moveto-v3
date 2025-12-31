@@ -24,4 +24,4 @@ export const SignInResSchema = z.object({
   result: z.string(),
 });
 
-export type SignInResResponse = z.infer<typeof SignInResSchema>;
+export type SignInResType = z.infer<typeof SignInResSchema>;

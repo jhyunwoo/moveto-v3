@@ -3,6 +3,7 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { SignInReqType } from "@repo/validation";
 import clientApi from "../../../lib/client/clientApi";
+import { useRouter } from "next/navigation";
 
 export default function SignInForm() {
   const {
@@ -10,11 +11,16 @@ export default function SignInForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<SignInReqType>();
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<SignInReqType> = async (data) => {
-    const reqSignIn = await clientApi.auth.signIn.$post({ json: data });
-    const result = await reqSignIn.json();
-    console.log(result);
+    const reqSignIn = await clientApi.auth.signIn.$post({
+      json: data,
+    });
+    if (!reqSignIn.ok) {
+      return;
+    }
+    router.replace("/profile");
   };
 
   return (

@@ -13,6 +13,7 @@ class AuthManager {
   // c 타입을 명확히 지정하여 c.env 접근 시 타입 추론 지원
   c: Context<Env>;
   COOKIE_OPTIONS: {
+    domain: string;
     path: string;
     secure: boolean;
     httpOnly: boolean;
@@ -23,8 +24,9 @@ class AuthManager {
   constructor(c: Context<Env>) {
     this.c = c;
     this.COOKIE_OPTIONS = {
+      domain: ".moveto.workers.dev",
       path: "/",
-      secure: this.c.req.url !== "http://localhost:8787",
+      secure: true,
       httpOnly: true,
       maxAge: 604800, // 7일
       sameSite: "lax",
@@ -81,6 +83,7 @@ class AuthManager {
     // 3. 세션 생성 및 쿠키 설정 (기존 로직 유지)
     const session = new SessionManager(this.c.env.session_kv);
     const userPayload = {
+      username: newUser?.name,
       userId: newUser?.id,
       email: newUser?.email,
       plan: newUser?.plan,
@@ -94,9 +97,9 @@ class AuthManager {
 
   async signIn(email: string, password: string) {
     const db = createDB(this.c.env.db);
-
     const [emailAndPassword] = await db
       .select({
+        username: usersTable.name,
         userId: usersTable.id,
         plan: usersTable.plan,
         email: usersTable.email,
@@ -128,6 +131,7 @@ class AuthManager {
 
     const session = new SessionManager(this.c.env.session_kv);
     const userPayload = {
+      username: emailAndPassword.username,
       userId: emailAndPassword.userId,
       email: emailAndPassword.email,
       createdAt: emailAndPassword.createdAt,

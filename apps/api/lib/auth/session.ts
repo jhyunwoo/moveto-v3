@@ -1,11 +1,12 @@
 // 1. Plan 타입 정의 (오타 방지 및 자동완성용)
-export type UserPlan = "free" | "plus" | "pro";
+import { UserPlanType } from "@repo/validation";
 
 // 2. 세션 데이터 인터페이스 수정 (role -> plan)
 export interface SessionPayload {
   userId: string;
+  username: string;
   email: string;
-  plan: UserPlan; // 이제 문자열 아무거나가 아닌, 위 3개 중 하나만 들어갈 수 있음
+  plan: UserPlanType; // 이제 문자열 아무거나가 아닌, 위 3개 중 하나만 들어갈 수 있음
   createdAt: Date;
 }
 
@@ -16,7 +17,7 @@ export class SessionManager {
 
   constructor(kv: KVNamespace, options?: { prefix?: string; ttl?: number }) {
     this.kv = kv;
-    this.prefix = options?.prefix ?? "sess:";
+    this.prefix = options?.prefix ?? "";
     this.defaultTtl = options?.ttl ?? 60 * 60 * 24 * 7;
   }
 
