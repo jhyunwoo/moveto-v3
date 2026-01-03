@@ -29,7 +29,7 @@ async function ProfileButton() {
     return <SignButton className={badgeClassName} signUp={true} />;
   }
 
-  const userData = await getMeData(sessionCookie);
+  const userData = await getMeData(sessionCookie.value);
   if (!userData) {
     return <SignButton className={badgeClassName} signIn={true} />;
   }

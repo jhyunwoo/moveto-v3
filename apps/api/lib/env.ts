@@ -13,6 +13,7 @@ interface Bindings {
   db: D1Database;
   hash: Fetcher;
   session_kv: KVNamespace;
+  r2: R2Bucket;
 }
 
 export default Env;

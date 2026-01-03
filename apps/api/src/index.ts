@@ -3,6 +3,7 @@ import { Scalar } from "@scalar/hono-api-reference";
 import { BaseResSchema } from "./getSchema";
 import healthApp from "./health";
 import authApp from "./auth";
+import uploadApp from "./upload";
 import { cors } from "hono/cors";
 import authMiddleware from "../lib/middleware/auth";
 import Env from "../lib/env";
@@ -66,7 +67,8 @@ const routes = app
     return c.json({ message: "Moveto V3 API" }, 200);
   })
   .route("/health", healthApp)
-  .route("/auth", authApp);
+  .route("/auth", authApp)
+  .route("/upload", uploadApp);
 
 export default app;
 export type AppType = typeof routes;

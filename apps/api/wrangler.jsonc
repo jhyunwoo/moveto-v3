@@ -38,7 +38,14 @@
 			"persist": true,
 			"head_sampling_rate": 1
 		}
-	}
+	},
+	"r2_buckets": [
+		{
+			"bucket_name": "moveto-v3-storage",
+			"binding": "r2",
+			"remote": true
+		}
+	]
 	// "compatibility_flags": [
 	//   "nodejs_compat"
 	// ],
