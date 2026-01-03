@@ -27,7 +27,7 @@ export default defineCloudflareConfig({
     },
   }),
   // Disable this if you want to use PPR
-  enableCacheInterception: true,
+  enableCacheInterception: false,
   // you can also use the `durableObject` option to use a durable object as a cache purge
   cachePurge: purgeCache({ type: "direct" }),
 });

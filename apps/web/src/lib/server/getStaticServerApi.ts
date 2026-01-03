@@ -2,9 +2,9 @@ import { hc } from "hono/client";
 import type { AppType } from "api"; // API 프로젝트에서 타입 import
 import { getCloudflareContext } from "@opennextjs/cloudflare"; // OpenNext 설정에 따라 import 경로가 다를 수 있음
 
-export const getApiClient = async () => {
+export const getStaticServerApi = async () => {
   // 1. Cloudflare Env 가져오기 (OpenNext 버전에 따라 방식이 다를 수 있음)
-  const { env } = getCloudflareContext();
+  const { env } = await getCloudflareContext({ async: true });
 
   // 2. Service Binding이 존재하는지 확인
   if (!env.api) {

@@ -13,7 +13,7 @@ class AuthManager {
   // c 타입을 명확히 지정하여 c.env 접근 시 타입 추론 지원
   c: Context<Env>;
   COOKIE_OPTIONS: {
-    domain: string;
+    domain?: string;
     path: string;
     secure: boolean;
     httpOnly: boolean;
@@ -23,11 +23,14 @@ class AuthManager {
 
   constructor(c: Context<Env>) {
     this.c = c;
+    const isLocal =
+      c.req.url.includes("localhost") || c.req.url.includes("127.0.0.1");
+
     this.COOKIE_OPTIONS = {
-      domain: ".moveto.workers.dev",
+      domain: isLocal ? undefined : ".moveto.workers.dev",
       path: "/",
-      secure: true,
-      httpOnly: true,
+      secure: !isLocal,
+      httpOnly: !isLocal, // 로컬에서는 값 확인 가능하도록 false
       maxAge: 604800, // 7일
       sameSite: "lax",
     };

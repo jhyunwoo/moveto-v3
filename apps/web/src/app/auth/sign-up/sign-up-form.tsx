@@ -3,6 +3,7 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { SignUpReqType } from "@repo/validation";
 import clientApi from "../../../lib/client/clientApi";
+import { useRouter } from "next/navigation";
 
 export default function SignUpForm() {
   const {
@@ -10,15 +11,16 @@ export default function SignUpForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<SignUpReqType>();
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<SignUpReqType> = async (data) => {
     const reqSignUp = await clientApi.auth.signUp.$post({ json: data });
     const result = await reqSignUp.json();
     console.log(result);
+    router.replace("/profile");
   };
 
   return (
-    /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
     <form
       onSubmit={handleSubmit(onSubmit)}
       className={"flex flex-col w-full max-w-4xl gap-2"}

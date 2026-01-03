@@ -16,11 +16,14 @@
     "@opennextjs/cloudflare": "^1.14.7",
     "@repo/ui": "workspace:*",
     "@repo/validation": "workspace:*",
+    "clsx": "^2.1.1",
     "hono": "^4.11.2",
+    "lucide-react": "^0.562.0",
     "next": "^15.6.0-canary.60",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-hook-form": "^7.69.0"
+    "react-hook-form": "^7.69.0",
+    "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251230.0",
