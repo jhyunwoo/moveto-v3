@@ -1,14 +1,13 @@
 import { getServerApi } from "./getServerApi";
-import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
-export async function getMeData(sessionCookie: RequestCookie) {
+export async function getMeData(sessionId: string) {
   const client = await getServerApi();
 
   const userInfoReq = await client.auth.me.$get(
     {},
     {
       headers: {
-        Cookie: `${sessionCookie.name}=${sessionCookie.value}`,
+        Cookie: `session=${sessionId}`,
       },
     },
   );

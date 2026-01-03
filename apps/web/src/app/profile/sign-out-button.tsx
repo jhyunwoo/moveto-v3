@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function SignOutButton() {
   const router = useRouter();
+
   async function handleSignOut() {
     const signOutReq = await clientApi.auth.signOut.$put();
     if (!signOutReq.ok) {
@@ -13,6 +14,7 @@ export default function SignOutButton() {
     }
     router.push("/auth/sign-in");
   }
+
   return (
     <button onClick={handleSignOut} type={"button"}>
       Sign Out
