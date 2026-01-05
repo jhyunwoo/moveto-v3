@@ -4,3 +4,7 @@ export * from "./auth/signOut";
 export * from "./apiError";
 export * from "./healthCheck";
 export * from "./auth/me";
+export * from "./s3/multipart/complete";
+export * from "./s3/multipart/signPart";
+export * from "./s3/multipart/abort";
+export * from "./s3/multipart/create";

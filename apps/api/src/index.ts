@@ -3,7 +3,7 @@ import { Scalar } from "@scalar/hono-api-reference";
 import { BaseResSchema } from "./getSchema";
 import healthApp from "./health";
 import authApp from "./auth";
-import uploadApp from "./upload";
+import s3App from "./s3";
 import { cors } from "hono/cors";
 import authMiddleware from "../lib/middleware/auth";
 import Env from "../lib/env";
@@ -68,7 +68,7 @@ const routes = app
   })
   .route("/health", healthApp)
   .route("/auth", authApp)
-  .route("/upload", uploadApp);
+  .route("/s3", s3App);
 
 export default app;
 export type AppType = typeof routes;
